@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from materials.models import Course, Lesson
 
 NULLABLE = {'blank': True, 'null': True}
 
@@ -25,6 +24,7 @@ class User(AbstractUser):
 
 
 class Payment(models.Model):
+    from materials.models import Course, Lesson
     """Модель платежа"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='пользователь')
     pay_date = models.DateField(auto_now_add=True, verbose_name='дата оплаты')
