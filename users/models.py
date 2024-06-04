@@ -42,3 +42,4 @@ class Payment(models.Model):
 
     def __str__(self):
         return f'{self.price}р. - {self.pay_date}'
+
