@@ -26,11 +26,13 @@ class User(AbstractUser):
 class Payment(models.Model):
     from materials.models import Course, Lesson
     """Модель платежа"""
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='пользователь')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='пользователь', **NULLABLE)
     pay_date = models.DateField(auto_now_add=True, verbose_name='дата оплаты')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='оплаченный курс', **NULLABLE)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name='оплаченный урок', **NULLABLE)
     price = models.PositiveIntegerField(verbose_name='оплаченная сумма')
+    session_id = models.CharField(max_length=255, verbose_name='id сессии', **NULLABLE)
+    link = models.URLField(max_length=400, verbose_name='ссылка на оплату', **NULLABLE)
     CASH = 'наличные'
     TRANSFER = 'перевод'
     methods = [(CASH, 'наличные'), (TRANSFER, 'перевод'),]

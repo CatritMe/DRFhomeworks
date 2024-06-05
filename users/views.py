@@ -3,13 +3,14 @@ import django_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework import filters
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from materials.models import Course
 from users.models import User, Payment
 from users.serializers import UserSerializer, PaymentSerializer, UserDetailSerializer
+from users.services import create_stripe_price, create_stripe_product, create_stripe_session
 
 
 class UserViewSet(ModelViewSet):
@@ -45,3 +46,17 @@ class PaymentListAPIView(ListAPIView):
     filterset_fields = ['course', 'lesson', 'method']
     ordering_fields = ['pay_date']
 
+
+class PaymentCreateAPIView(CreateAPIView):
+    serializer_class = PaymentSerializer
+    queryset = Payment.objects.all()
+
+    def perform_create(self, serializer):
+        payment = serializer.save(user=self.request.user)
+        product = create_stripe_product(payment)
+        price = create_stripe_price(payment.price, product)
+        session_id, payment_link = create_stripe_session(price)
+        payment.session_id = session_id
+        payment.link = payment_link
+        payment.user = self.request.user
+        payment.save()
