@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -9,6 +8,7 @@ from materials.models import Course, Lesson, Subscription
 from materials.paginations import CustomPagination
 from materials.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
 from users.permissions import IsModerator, IsOwner
+from materials.tasks import send_email
 
 
 class CourseViewSet(ModelViewSet):
@@ -18,6 +18,7 @@ class CourseViewSet(ModelViewSet):
     pagination_class = CustomPagination
 
     def perform_create(self, serializer):
+        """при создании курса присваивать его создавшему юзеру"""
         course = serializer.save()
         course.owner = self.request.user
         course.save()
@@ -32,6 +33,12 @@ class CourseViewSet(ModelViewSet):
             self.permission_classes = (IsAuthenticated | IsModerator | IsOwner,)
         return super().get_permissions()
 
+    def update(self, request, pk):
+        """Вьюсет обновления курсов с отправкой письма для подписчиков"""
+        course = get_object_or_404(Course, pk=pk)
+        send_email.delay(course_id=course.id)
+        return super().update(request)
+
 
 class LessonCreateAPIView(CreateAPIView):
     """контроллер для создания урока"""
@@ -39,6 +46,7 @@ class LessonCreateAPIView(CreateAPIView):
     permission_classes = (IsAuthenticated, ~IsModerator,)
 
     def perform_create(self, serializer):
+        """присвоение урока создавшему пользователю"""
         lesson = serializer.save()
         lesson.owner = self.request.user
         lesson.save()

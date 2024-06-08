@@ -60,7 +60,21 @@ class CourseTestCase(APITestCase):
             response.status_code, status.HTTP_200_OK
         )
         self.assertEqual(
-            response.json(), {'count': 1, 'next': None, 'previous': None, 'results': [{'id': self.course.pk, 'lessons_count': 1, 'lessons': ['test_les'], 'subscription': True, 'title': 'test', 'preview': None, 'description': None, 'owner': self.user.pk}]}
+            response.json(), {
+                'count': 1,
+                'next': None,
+                'previous': None,
+                'results': [{
+                    'id': self.course.pk,
+                    'lessons_count': 1,
+                    'lessons': ['test_les'],
+                    'subscription': True,
+                    'title': 'test',
+                    'preview': None,
+                    'description': None,
+                    'owner': self.user.pk
+                }]
+            }
         )
 
     def test_course_delete(self):
@@ -159,7 +173,20 @@ class LessonTestCase(APITestCase):
             response.status_code, status.HTTP_200_OK
         )
         self.assertEqual(
-            response.json(), {'count': 1, 'next': None, 'previous': None, 'results': [{'id': self.lesson.pk, 'title': 'test_les', 'preview': None, 'description': None, 'url': 'url', 'course': self.lesson.course.pk, 'owner': self.user.pk}]}
+            response.json(), {
+                'count': 1,
+                'next': None,
+                'previous': None,
+                'results': [{
+                    'id': self.lesson.pk,
+                    'title': 'test_les',
+                    'preview': None,
+                    'description': None,
+                    'url': 'url',
+                    'course': self.lesson.course.pk,
+                    'owner': self.user.pk
+                }]
+            }
         )
 
     def test_lesson_delete(self):

@@ -13,6 +13,11 @@ class LessonSerializer(ModelSerializer):
         validators = [UrlValidator(field='url')]
 
 
+def get_lessons(obj):
+    """возвращает lessons - все уроки в курсе"""
+    return [lesson.title for lesson in Lesson.objects.filter(course=obj.pk)]
+
+
 class CourseSerializer(ModelSerializer):
     """сериалайзер для курса"""
     lessons_count = SerializerMethodField()
@@ -27,10 +32,6 @@ class CourseSerializer(ModelSerializer):
     def get_lessons_count(obj):
         """возвращает lessons_count - количество уроков в курсе"""
         return Lesson.objects.filter(course=obj.pk).count()
-
-    def get_lessons(self, obj):
-        """возвращает lessons - все уроки в курсе"""
-        return [lesson.title for lesson in Lesson.objects.filter(course=obj.pk)]
 
     def get_subscription(self, obj):
         request = self.context.get('request')

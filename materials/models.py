@@ -11,6 +11,7 @@ class Course(models.Model):
     preview = models.ImageField(upload_to='materials/preview/', verbose_name='превью', **NULLABLE)
     description = models.TextField(verbose_name='описание', **NULLABLE)
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='владелец', **NULLABLE)
+    last_update = models.DateTimeField(verbose_name="Последнее обновление", **NULLABLE)
 
     def __str__(self):
         return f'{self.title}'

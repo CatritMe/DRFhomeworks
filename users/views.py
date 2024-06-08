@@ -1,13 +1,9 @@
-from django.shortcuts import render
-import django_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.response import Response
 from rest_framework import filters
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from materials.models import Course
 from users.models import User, Payment
 from users.serializers import UserSerializer, PaymentSerializer, UserDetailSerializer
 from users.services import create_stripe_price, create_stripe_product, create_stripe_session
